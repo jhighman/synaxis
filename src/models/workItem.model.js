@@ -33,8 +33,7 @@ const DatesSchema = new mongoose.Schema({
 // WorkItem Schema
 const WorkItemSchema = new mongoose.Schema({
   workflowId: {
-    type: Number,
-    required: true
+    type: Number
   },
   status: {
     type: String,
@@ -45,7 +44,7 @@ const WorkItemSchema = new mongoose.Schema({
   referenceType: {
     type: String,
     trim: true,
-    enum: ["claim", "otherReferenceType"], // Add other reference types as needed
+    default: "notStarted",
   },
   dates: DatesSchema,
   isStarted: {
@@ -66,9 +65,13 @@ const WorkItemSchema = new mongoose.Schema({
   }
 });
 
-// Pre-save hook to auto-increment the workflowId
-WorkItemSchema.pre('save', function(next) {
+WorkItemSchema.pre('save', async function(next) {
   const doc = this;
+
+  // Initialize dates as an empty object if it doesn't exist
+  if (!doc.dates) {
+    doc.dates = {};
+  }
 
   // Update boolean fields based on the presence of date fields
   doc.isStarted = !!doc.dates.startedDate;
@@ -76,25 +79,24 @@ WorkItemSchema.pre('save', function(next) {
   doc.isPublished = !!doc.dates.publishedDate;
   doc.isArchived = !!doc.dates.archivedDate;
 
-  // Auto-increment workflowId for new documents
-  if (doc.isNew) {
-    Counter.findByIdAndUpdate(
-      { _id: 'workflowId' },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true },
-      (error, counter) => {
-        if (error) {
-          next(error);
-        } else {
-          doc.workflowId = counter.seq;
-          next();
-        }
-      }
-    );
+  // Auto-increment workflowId for new documents if workflowId is not set
+  if (doc.isNew && doc.workflowId == null) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        { _id: 'workflowId' },
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      doc.workflowId = counter.seq;
+      next();
+    } catch (error) {
+      next(error);
+    }
   } else {
     next();
   }
 });
+
 
 const WorkItem = mongoose.model("WorkItem", WorkItemSchema);
 
