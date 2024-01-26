@@ -44,7 +44,6 @@ const WorkItemSchema = new mongoose.Schema({
   },
   referenceType: {
     type: String,
-    required: true,
     trim: true,
     enum: ["claim", "otherReferenceType"], // Add other reference types as needed
   },
