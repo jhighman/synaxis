@@ -1,5 +1,5 @@
 const ClaimGenericSchema = {
-    $id: 'Claim',
+    $id: 'claim',
     type: 'object',
     properties: {
       claimId: {
@@ -59,5 +59,19 @@ const ClaimGenericSchema = {
     required: ['claimId', 'credentialSubject', 'credentialId', 'claimDetail', 'origin', 'verification']
   };
   
-  module.exports = { ClaimGenericSchema };
+  const Claims = {
+    $id: 'claims',
+    type: 'object',
+    properties: {
+      claims: {
+        type: 'array',
+        items: ClaimGenericSchema
+      }
+    },
+    required: ['claims']
+  };
+  
+  
+  module.exports = { ClaimGenericSchema, Claims };
+  
   

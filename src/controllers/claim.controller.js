@@ -1,5 +1,4 @@
 const Claim = require("../models/claim.model");
-const WorkItem = require("../models/workItem.model");
 
 async function createClaim(request, reply) {
   try {

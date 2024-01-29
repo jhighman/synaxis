@@ -1,5 +1,5 @@
 const WorkItemGenericSchema = {
-    $id: 'BotTask',
+    $id: 'workItem',
     type: 'object',
     properties: {
       workflowId: {
@@ -44,5 +44,18 @@ const WorkItemGenericSchema = {
     required: ['status', 'referenceType'] // Include other required properties if any
   };
   
-  module.exports = { WorkItemGenericSchema };
+  const WorkItems = {
+    $id: 'workItems',
+    type: 'object',
+    properties: {
+      workItems: {
+        type: 'array',
+        items: WorkItemGenericSchema
+      }
+    },
+    required: ['workItems']
+  };
+  
+  module.exports = { WorkItemGenericSchema, WorkItems };
+  
   
