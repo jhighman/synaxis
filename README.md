@@ -34,8 +34,57 @@ Synaxis is a workflow orchestration and claim management system. It integrates v
 
 ## Technical Stack and Dependencies
 
-(Include details of the technical stack, frameworks, libraries, and any external dependencies used in Synaxis.)
+**Running Synaxis Locally**
 
-## Conclusion
+To run the Synaxis project locally on your machine, follow these steps:
 
-Synaxis is designed to streamline workflow and claim management processes in a systematic and efficient manner. Its architecture supports scalability and adaptability to various enterprise requirements.
+**Prerequisites**
+
+Before you start, ensure you have the following prerequisites installed:
+
+- **Node.js**: Make sure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/).
+
+**Clone the Repository**
+
+**Configure Environment Variables**
+
+1. Create a `.env` file in the root directory of the project manually or using a text editor.
+
+2. Open the `.env` file and add the following line, replacing `<your-mongodb-uri>` with your MongoDB connection URI:
+
+MONGODB_URI=<your-mongodb-uri>
+
+Make sure to replace `<your-mongodb-uri>` with the actual URI for your MongoDB database.
+
+**Install Dependencies**
+
+1. Navigate to the project's root directory (if you're not already there).
+
+2. Install project dependencies by running: npm install
+
+
+**Start the Development Server**
+
+1. After installing the dependencies, start the development server with the following command: npm run dev
+
+2. This command will start the Fastify server and make your Synaxis application available locally.
+
+3. After running the command, you will see output indicating that the server is running and accessible at a specific URL (e.g., `http://localhost:3000`).
+
+4. Open your web browser and navigate to the URL provided (e.g., [http://localhost:3000](http://localhost:3000)) to access the Synaxis application locally.
+
+**Usage**
+
+You can now use the Synaxis application locally for testing and development purposes. Refer to the API documentation (usually available at [http://localhost:3000/api-docs](http://localhost:3000/api-docs)) for details on available endpoints and how to interact with the system.
+
+
+
+
+
+
+
+
+
+
+
+
