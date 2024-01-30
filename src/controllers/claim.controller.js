@@ -1,30 +1,55 @@
+const INITIAL_WORKITEM_STATUS = "notStarted";
+const INITIAL_WORKITEM_REFERENCE_TYPE = "claim";
+const WorkItem = require("../models/workItem.model");
 const Claim = require("../models/claim.model");
 
 async function createClaim(request, reply) {
-  try {
-    let workItemId = request.body.workflowId;
+  console.log('Received request:', request.body);
 
-    // If workflowId is not provided, create a new WorkItem
-    if (!workItemId) {
-      const newWorkItem = new WorkItem({ /* properties for the new WorkItem */ });
+  try {
+    const workflowId = request.body.workflowId;
+    console.log(`Received workflowId: ${workflowId} (Type: ${typeof workflowId})`);
+    let associatedWorkItemId;
+
+    if (workflowId === undefined) {
+      console.log('No workflowId provided. Creating a new WorkItem.');
+      const newWorkItem = new WorkItem({
+        status: INITIAL_WORKITEM_STATUS,
+        referenceType: INITIAL_WORKITEM_REFERENCE_TYPE
+        // add other default properties here if needed
+      });
       await newWorkItem.save();
-      workItemId = newWorkItem._id;
+      associatedWorkItemId = newWorkItem._id;
     } else {
-      // Verify the existence of the provided WorkItem
-      const workItem = await WorkItem.findById(workItemId);
+      // If workflowId is provided, find the corresponding WorkItem
+      console.log(`Finding WorkItem with workflowId: ${workflowId}`);
+      const workItem = await WorkItem.findOne({ workflowId: workflowId });
+
       if (!workItem) {
-        return reply.status(400).send({ message: "Invalid WorkItem ID" });
+        console.log(`No WorkItem found with workflowId: ${workflowId}`);
+        reply.status(400).send({ message: `No WorkItem found with workflowId: ${workflowId}` });
+        return;
       }
+
+      console.log(`Found WorkItem: ${workItem}`);
+      associatedWorkItemId = workItem._id;
     }
 
     // Create the Claim with the associated WorkItem
-    const claim = new Claim({ ...request.body, workflowId: workItemId });
+    console.log(`Creating claim with associated WorkItemId: ${associatedWorkItemId}`);
+    const claim = new Claim({ ...request.body, workItem: associatedWorkItemId });
     await claim.save();
-    reply.send(claim);
+    const populatedClaim = await Claim.findById(claim._id).populate('workItem');
+    console.log(`Claim created and populated with WorkItem: ${populatedClaim}`);
+    reply.send(populatedClaim);
   } catch (error) {
-    reply.status(400).send(error);
+    console.error(`Error in creating claim: ${error.message}`);
+    reply.status(500).send({ message: 'Error creating claim', error: error.message });
   }
 }
+
+
+
 
 async function getAllClaims(request, reply) {
   try {

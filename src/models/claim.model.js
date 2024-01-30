@@ -104,13 +104,15 @@ const ClaimDetailSchema = new mongoose.Schema({
 
 const ClaimSchema = new mongoose.Schema({
   claimId: {
-    type: String,
+    type: Number,
     required: true,
-    trim: true,
     unique: true,
   },
   workflowId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Number, // Logical reference to the workflowId in WorkItemSchema
+  },
+  workItem: {
+    type: mongoose.Schema.Types.ObjectId, // DB reference to a WorkItem document
     ref: "WorkItem"
   },
   credentialSubject: CredentialSubjectSchema,
@@ -119,6 +121,29 @@ const ClaimSchema = new mongoose.Schema({
   origin: OriginSchema,
   verification: VerificationSchema,
 });
+
+
+ClaimSchema.pre('save', async function(next) {
+  const doc = this;
+
+  // Auto-increment claimId for new documents if claimId is not set
+  if (doc.isNew && doc.claimId == null) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        { _id: 'claimId' }, // Unique identifier for the claimId sequence
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      doc.claimId = counter.seq;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
+
 
 const Claim = mongoose.model("Claim", ClaimSchema);
 

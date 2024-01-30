@@ -56,7 +56,7 @@ const ClaimGenericSchema = {
         }
       }
     },
-    required: ['claimId', 'credentialSubject', 'credentialId', 'claimDetail', 'origin', 'verification']
+    required: []
   };
   
   const Claims = {
