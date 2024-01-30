@@ -30,7 +30,7 @@ async function routes(fastify, options) {
       reply.status(500).send({ message: 'Error retrieving claim', error: error.message });
     }
   });
-  
+
 
 
   fastify.post("/", {
@@ -48,7 +48,7 @@ async function routes(fastify, options) {
       reply.status(500).send({ message: 'Error creating claim', error: error.message });
     }
   });
-  
+
 
   fastify.put("/:id", {
     schema: {
@@ -65,7 +65,7 @@ async function routes(fastify, options) {
       reply.status(500).send({ message: 'Error updating claim', error: error.message });
     }
   });
-  
+
 
 
   fastify.delete("/:id", {
@@ -87,7 +87,7 @@ async function routes(fastify, options) {
       reply.status(500).send({ message: 'Error deleting claim', error: error.message });
     }
   });
-  
+
 }
 
 module.exports = routes;
