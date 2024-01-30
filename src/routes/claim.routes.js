@@ -1,54 +1,76 @@
 const claimController = require("../controllers/claim.controller");
 
 async function routes(fastify, options) {
-  // Get all claims
   fastify.get("/", {
     schema: {
+      description: 'Retrieves a list of all claims in the system.',
       response: {
-        200: { $ref: 'claims#' } // Reference to the Claims schema
+        200: { $ref: 'claims#' }
       }
     }
   }, async (request, reply) => {
     try {
-      console.log("Route handler called");
-      return claimController.getAllClaims(request, reply);
+      return await claimController.getAllClaims(request, reply);
     } catch (error) {
-      console.error("Error in route handler:", error);
-      throw error; // This will allow Fastify to handle the error
+      reply.status(500).send({ message: 'Error retrieving claims', error: error.message });
     }
   });
 
   fastify.get("/:id", {
     schema: {
+      description: 'Retrieves a specific claim based on its unique identifier.',
       response: {
-        200: { $ref: 'claim#' } // Response schema for a specific claim
+        200: { $ref: 'claim#' }
       }
     }
-  }, claimController.getClaimById);
+  }, async (request, reply) => {
+    try {
+      return await claimController.getClaimById(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error retrieving claim', error: error.message });
+    }
+  });
   
+
 
   fastify.post("/", {
     schema: {
-      body: { $ref: 'claim#' }, // Request body schema for a new claim
+      description: 'Creates a new claim with the provided details.',
+      body: { $ref: 'claim#' },
       response: {
-        201: { $ref: 'claim#' } // Response schema for a created claim
+        201: { $ref: 'claim#' }
       }
     }
-  }, claimController.createClaim);
+  }, async (request, reply) => {
+    try {
+      return await claimController.createClaim(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error creating claim', error: error.message });
+    }
+  });
   
 
   fastify.put("/:id", {
     schema: {
-      body: { $ref: 'claim#' }, // Request body schema for updating a claim
+      description: 'Updates the details of an existing claim.',
+      body: { $ref: 'claim#' },
       response: {
-        200: { $ref: 'claim#' } // Response schema for an updated claim
+        200: { $ref: 'claim#' }
       }
     }
-  }, claimController.updateClaim);
+  }, async (request, reply) => {
+    try {
+      return await claimController.updateClaim(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error updating claim', error: error.message });
+    }
+  });
   
+
 
   fastify.delete("/:id", {
     schema: {
+      description: 'Deletes a claim.',
       response: {
         200: {
           type: 'object',
@@ -58,7 +80,14 @@ async function routes(fastify, options) {
         }
       }
     }
-  }, claimController.deleteClaim);
+  }, async (request, reply) => {
+    try {
+      return await claimController.deleteClaim(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error deleting claim', error: error.message });
+    }
+  });
+  
 }
 
 module.exports = routes;

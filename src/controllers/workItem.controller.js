@@ -1,17 +1,13 @@
 const WorkItem = require("../models/workItem.model");
 
-async function getNextWorkItem(request, reply) {
+
+
+async function getLastWorkItem(request, reply) {
   try {
     const workItem = await WorkItem.findOne({
       $or: [
         { isStarted: false },
-        { isCompleted: false },
-        { isPublished: false },
-        { isArchived: false },
-        { isStarted: { $exists: false } },
-        { isCompleted: { $exists: false } },
-        { isPublished: { $exists: false } },
-        { isArchived: { $exists: false } }
+        { isStarted: { $exists: false } }
       ]
     }).sort({ workflowId: -1 }).exec();
 
@@ -25,6 +21,27 @@ async function getNextWorkItem(request, reply) {
     reply.status(500).send({ message: error.message });
   }
 }
+
+async function getNextWorkItem(request, reply) {
+  try {
+    const workItem = await WorkItem.findOne({
+      $or: [
+        { isStarted: false },
+        { isStarted: { $exists: false } }
+      ]
+    }).sort({ workflowId: 1 }).exec();
+
+    if (!workItem) {
+      reply.status(404).send({ message: 'No work item found' });
+      return;
+    }
+
+    reply.send(workItem);
+  } catch (error) {
+    reply.status(500).send({ message: error.message });
+  }
+}
+
 
 
 async function startWorkItem(request, reply) {
@@ -127,7 +144,7 @@ async function publishWorkItem(request, reply) {
 
 
   try {
-    const workItem = await WorkItem.findOne({ workflowId: workflowId });
+    const workItem = await WorkItem.findById(workItemId);
 
     if (!workItem) {
       reply.status(404).send({ message: 'Work item not found' });
@@ -227,6 +244,7 @@ async function deleteWorkItem(request, reply) {
 module.exports = {
   getAllWorkItems,
   getNextWorkItem,
+  getLastWorkItem,
   startWorkItem,
   completeWorkItem,
   publishWorkItem,

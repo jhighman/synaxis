@@ -5,6 +5,9 @@ const fastify = require("fastify")({ logger: true });
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+const SYNAXIS_DESCRIPTION = require('./synaxisDescription');
+
+
 const claimRoutes = require("./routes/claim.routes");
 const claimSchemas = require("./schemas/claim.schemas");
 const ClaimGenericSchema = claimSchemas.ClaimGenericSchema;
@@ -37,7 +40,7 @@ fastify.register(Swagger, {
   swagger: {
     info: {
       title: 'Synaxis',
-      description: 'A sytem for coordinating, tracking, and orchestrating B and Agents to verify claims',
+      description: SYNAXIS_DESCRIPTION,
       version: '0.1.0'
     },
     host: 'localhost',

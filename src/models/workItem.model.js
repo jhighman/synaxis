@@ -44,7 +44,7 @@ const WorkItemSchema = new mongoose.Schema({
   referenceType: {
     type: String,
     trim: true,
-    default: "notStarted",
+    default: "claim",
   },
   dates: DatesSchema,
   isStarted: {
