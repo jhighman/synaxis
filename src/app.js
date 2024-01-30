@@ -72,7 +72,7 @@ fastify.setReplySerializer(payload => JSON.stringify(payload, null, 2));
 
 const start = async () => {
   try {
-    await fastify.listen(process.env.PORT || 5000);
+    await fastify.listen({port: process.env.PORT || 3000, host: '0.0.0.0'});
     fastify.log.info(`Server is running on port ${fastify.server.address().port}`);
   } catch (error) {
     console.error("Server start error:", error);
