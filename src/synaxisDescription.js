@@ -1,42 +1,73 @@
 const SYNAXIS_DESCRIPTION = `
 
-## System Overview
+## API Endpoints and Operations
 
-Synaxis is a workflow orchestration and claim management system. It integrates various components and processes, focusing on the lifecycle of claims and work items within an enterprise context.
+### Creating and Managing Claims
 
-### Core Components
+- Create a new claim: \`POST /api/v1/claims/\` using the \`claim\` model.
+- Retrieve a claim: \`GET /api/v1/claims/{id}\`.
+- Update a claim: \`PUT /api/v1/claims/{id}\`.
+- Delete a claim: \`DELETE /api/v1/claims/{id}\`.
 
-#### Claims Management
-- **Claim Representation**: Each claim is a distinct entity in the system, encapsulated with relevant details including claimant credentials and claim specifics.
-- **Verification Process**: Claims undergo a structured verification process, ensuring accuracy and integrity of data.
+### Facilitative Updates
 
-#### Work Items
-- **Lifecycle Stages**: Each claim is treated as a work item, progressing through predefined stages: 'notStarted', 'inProgress', and 'completed'.
-- **State Management**: The system tracks and updates the state of each work item, reflecting its current stage in the workflow process.
+- Update subject details: \`POST /api/v1/claims/updateSubject/{id}\` with \`addSubject\`.
+- Update claimed credentials: \`POST /api/v1/claims/updateClaimedCredential/{id}\` with \`addClaimedCredential\`.
+- Update origin details: \`POST /api/v1/claims/updateOrigin/{id}\` with \`AddOrigin\`.
+- Update verification details: \`POST /api/v1/claims/updateVerification/{id}\` with \`AddVerification\`.
+
+### Work Item Operations
+
+- Retrieve the next work item: \`GET /api/v1/workItems/next\`.
+- Fetch the most recent work item: \`GET /api/v1/workItems/last\`.
+- List all work items: \`GET /api/v1/workItems/\`.
+- Create a new work item: \`POST /api/v1/workItems/\`.
+
+# Claim Management API Developer Guide
+
+The Claim Management API offers a structured approach to managing claims and their associated workflow items. This guide provides an overview of the API's capabilities, models, and endpoints, with best practices and technical considerations for developers.
+
+## Core Models
+
+- **claim**: A detailed representation of an individual claim.
+- **claims**: A group of \`claim\` models for batch handling.
+
+## Facilitative Models
+
+- **addSubject**: For adding/updating claim subject details.
+- **addClaimedCredential**: For credential information associated with a claim.
+- **AddOrigin**: For origin details of a claim.
+- **AddVerification**: For updating a claim's verification status.
+
+## Work Item Models
+
+- **workItem**: Structure for an individual work item within the workflow.
+- **workItems**: A set of \`workItem\` models for bulk operations.
+
+## Work Items Considerations
+
+### Lifecycle Stages
+
+- Each claim is treated as a work item that progresses through stages: 'notStarted', 'inProgress', and 'completed'.
+- The system ensures the state of each work item accurately reflects its current lifecycle stage.
 
 ### Workflow Management
 
-- **Work Item Generation**: On claim creation, a new work item is either automatically generated or linked to an existing one, based on provided input.
-- **Retrieval and Tracking**: The system supports retrieval of work items by their current state and allows updates to their status, facilitating efficient workflow management.
-- **Data Integrity**: Emphasizes maintaining data integrity and referential consistency, especially when work items are referenced or linked to claims.
+- **Work Item Generation**: A new work item is generated or linked on claim creation based on the input.
+- **Retrieval and Tracking**: Facilitates retrieval of work items by status and allows status updates for efficient workflow management.
+- **Data Integrity**: Maintains integrity and consistency, particularly when work items reference or link to claims.
 
-### Technical Highlights
+## Technical Highlights
 
-- **Automated Work Item Creation**: Automatically initiates a new work item when a claim is created without an existing work item link.
-- **Progress Tracking**: Enables real-time tracking and updating of work item statuses.
-- **Referential Integrity**: Ensures consistency and integrity by verifying the existence of referenced work items.
+- **Automated Work Item Creation**: When a new claim is created, the system automatically initiates a new work item if no existing link is provided.
+- **Progress Tracking**: Real-time tracking and updating of work item statuses are enabled.
+- **Referential Integrity**: The system checks for the existence of referenced work items to ensure consistency and integrity.
 
-### System Usage
+## System Usage
 
-- **Creating a Claim**: Initiates a claim along with an associated work item. If no \`workflowId\` is provided, a new work item is created.
-- **Updating Work Items**: Provides functionality to update the status of a work item through its lifecycle.
-- **Querying Work Items**: Supports fetching work items based on their status, e.g., the next unstarted or the most recently created item.
-
-## Technical Stack and Dependencies
-
-(Include details of the technical stack, frameworks, libraries, and any external dependencies used in Synaxis.)
-
-## Conclusion
+- **Creating a Claim**: Initiates a claim and an associated work item. A new work item is created if no \`workflowId\` is provided.
+- **Updating Work Items**: Allows status updates of work items as they progress through their lifecycle stages.
+- **Querying Work Items**: Supports fetching work items by their status, such as the next unstarted item or the most recently created item.
 
 Synaxis is designed to streamline workflow and claim management processes in a systematic and efficient manner. Its architecture supports scalability and adaptability to various enterprise requirements.
 
