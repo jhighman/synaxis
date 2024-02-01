@@ -45,7 +45,7 @@ const OriginSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  ReferenceID: {
+  referenceId: {
     type: String,
     required: true,
     trim: true,

@@ -12,6 +12,13 @@ const claimRoutes = require("./routes/claim.routes");
 const claimSchemas = require("./schemas/claim.schemas");
 const ClaimGenericSchema = claimSchemas.ClaimGenericSchema;
 const Claims = claimSchemas.Claims;
+const AddSubjectSchema = claimSchemas.AddSubjectSchema;
+const AddClaimedCredentialSchema = claimSchemas.AddClaimedCredentialSchema;
+const AddOriginSchema = claimSchemas.AddOriginSchema;
+const AddVerificationSchema = claimSchemas.AddVerificationSchema;
+
+
+
 fastify.addSchema({
   $id: 'claim',
   ...ClaimGenericSchema
@@ -21,6 +28,25 @@ fastify.addSchema({
   $id: 'claims',
   ...Claims
 });
+fastify.addSchema({
+  $id: 'addSubject',
+  ...AddSubjectSchema
+});
+fastify.addSchema({
+  $id: 'addClaimedCredential',
+  ...AddClaimedCredentialSchema
+});
+
+fastify.addSchema({
+  $id: 'AddOrigin',
+  ...AddOriginSchema
+});
+
+fastify.addSchema({
+  $id: 'AddVerification',
+  ...AddVerificationSchema
+});
+
 
 const workItemRoutes = require("./routes/workItem.routes");
 const workItemSchemas = require("./schemas/workItem.schemas");
