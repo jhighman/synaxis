@@ -47,6 +47,14 @@ async function routes(fastify, options) {
   });
   
 
+  fastify.get("/next", {
+    schema: {
+      description: 'Retrieves the next claim that has not been started yet.',
+      response: {
+        200: { $ref: 'claim#' } // Reference to the WorkItem schema
+      }
+    }
+  }, claimController.getNextClaim);
 
 
   fastify.post("/", {

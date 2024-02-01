@@ -52,6 +52,35 @@ async function createClaim(request, reply) {
 }
 
 
+async function getNextClaim(request, reply) {
+  try {
+    // Find the next work item that has not been started
+    const workItem = await WorkItem.findOne({
+      $or: [
+        { isStarted: false },
+        { isStarted: { $exists: false } }
+      ]
+    }).sort({ workflowId: 1 }).exec();
+
+    if (!workItem) {
+      reply.status(404).send({ message: 'No claims found' });
+      return;
+    }
+
+    // Find the associated claim for the found work item
+    const claim = await Claim.findOne({ workItem: workItem._id }).populate('workItem');
+
+    if (!claim) {
+      reply.status(404).send({ message: 'No claim found for the next work item' });
+      return;
+    }
+
+    reply.send(claim);
+  } catch (error) {
+    reply.status(500).send({ message: error.message });
+  }
+}
+
 
 
 async function getAllClaims(request, reply) {
@@ -208,8 +237,10 @@ async function deleteClaim(request, reply) {
   }
 }
 
+
 module.exports = {
   createClaim,
+  getNextClaim,
   getAllClaims,
   getClaimById,
   updateSubject,
