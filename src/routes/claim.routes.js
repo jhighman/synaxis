@@ -88,6 +88,75 @@ async function routes(fastify, options) {
     }
   });
 
+  fastify.post("/updateSubject/:id", {
+    schema: {
+      description: 'Updates subject details for a claim.',
+      params: { type: 'object', properties: { id: { type: 'string' } } },
+      body: { $ref: 'addSubject#' },
+      response: {
+        200: { $ref: 'claim#' }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      return await claimController.updateSubject(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error updating subject', error: error.message });
+    }
+  });
+  
+  fastify.post("/updateClaimedCredential/:id", {
+    schema: {
+      description: 'Updates claimed credential details for a claim.',
+      params: { type: 'object', properties: { id: { type: 'string' } } },
+      body: { $ref: 'addClaimedCredential#' },
+      response: {
+        200: { $ref: 'claim#' }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      return await claimController.updateClaimedCredential(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error updating claimed credential', error: error.message });
+    }
+  });
+  
+  fastify.post("/updateOrigin/:id", {
+    schema: {
+      description: 'Updates origin details for a claim.',
+      params: { type: 'object', properties: { id: { type: 'string' } } },
+      body: { $ref: 'AddOrigin#' },
+      response: {
+        200: { $ref: 'claim#' }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      return await claimController.updateOrigin(request, reply);
+    } catch (error) {
+      reply.status(500).send({ message: 'Error updating origin', error: error.message });
+    }
+  });
+
+  fastify.post("/updateVerification/:id", {
+    schema: {
+      description: 'Updates verification details for a claim.',
+      params: { type: 'object', properties: { id: { type: 'string' } } },
+      body: { $ref: 'AddVerification#' },
+      response: {
+        200: { $ref: 'claim#' }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      return await claimController.updateVerification(request, reply);
+    } catch (error) {
+      reply.status(500). send({ message: 'Error updating verification', error: error.message });
+    }
+  });
+  
+  
 }
 
 module.exports = routes;

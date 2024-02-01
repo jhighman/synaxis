@@ -73,6 +73,84 @@ async function getClaimById(request, reply) {
   }
 }
 
+async function updateSubject(request, reply) {
+  const claimId = request.params.id;
+  const updates = request.body;
+
+  const claimUpdates = {
+    workflowId: updates.workflowId,
+    credentialSubject: {
+      firstName: updates.firstName,
+      middleName: updates.middleName,
+      lastName: updates.lastName
+    }
+  };
+
+  return await updateClaim({ params: { id: claimId }, body: claimUpdates }, reply);
+}
+
+async function updateClaimedCredential(request, reply) {
+  const claimId = request.params.id;
+  const updates = request.body;
+
+  const claimUpdates = {
+    workflowId: updates.workflowId,
+    credentialSubject: {
+      firstName: updates.firstName,
+      middleName: updates.middleName,
+      lastName: updates.lastName
+    },
+    credentialId: {
+      identifier: updates.identifier,
+      identifierDescriptor: updates.identifierDescriptor,
+      issuer: updates.issuer,
+      location: updates.location
+    },
+    claimDetail: {
+      claimType: updates.claimType,
+      subtype: updates.subtype,
+      specialty: updates.specialty,
+      expirationMonth: updates.expirationMonth,
+      expirationYear: updates.expirationYear
+    }
+  };
+
+  return await updateClaim({ params: { id: claimId }, body: claimUpdates }, reply);
+}
+
+async function updateOrigin(request, reply) {
+  const claimId = request.params.id;
+  const updates = request.body;
+
+  const claimUpdates = {
+    workflowId: updates.workflowId,
+    origin: {
+      reference: updates.reference,
+      referenceSystem: updates.referenceSystem,
+      referenceId: updates.referenceId
+    }
+  };
+
+  return await updateClaim({ params: { id: claimId }, body: claimUpdates }, reply);
+}
+
+async function updateVerification(request, reply) {
+  const claimId = request.params.id;
+  const updates = request.body;
+
+  const claimUpdates = {
+    workflowId: updates.workflowId,
+    verification: {
+      verificationStatus: updates.verificationStatus,
+      verificationDate: updates.verificationDate,
+      claimStatus: updates.claimStatus
+    }
+  };
+
+  return await updateClaim({ params: { id: claimId }, body: claimUpdates }, reply);
+}
+
+
 
 async function updateClaim(request, reply) {
   try {
@@ -111,12 +189,14 @@ async function deleteClaim(request, reply) {
   }
 }
 
-
-
 module.exports = {
   createClaim,
   getAllClaims,
   getClaimById,
+  updateSubject,
+  updateOrigin,
+  updateVerification,
+  updateClaimedCredential,
   updateClaim, // Assuming this function is adapted similarly
   deleteClaim, // Assuming this function is adapted similarly
 };
