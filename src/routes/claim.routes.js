@@ -24,12 +24,28 @@ async function routes(fastify, options) {
       }
     }
   }, async (request, reply) => {
+    // Log the incoming request details
+    //console.log(`Received request to get claim with ID: ${request.params.id}`);
+    //console.log(`Request parameters type: ${typeof request.params.id}`);
+  
     try {
-      return await claimController.getClaimById(request, reply);
+      // Call the controller function and await its response
+      const claim = await claimController.getClaimById(request.params.id);
+  
+      // Verbose log the claim response
+      //console.log(`Retrieved claim details: ${JSON.stringify(claim, null, 2)}`);
+  
+      // Send the successful response back
+      reply.send(claim);
     } catch (error) {
+      // Log the error details
+      console.error(`Error retrieving claim with ID ${request.params.id}: ${error.message}`);
+  
+      // Send the error response back
       reply.status(500).send({ message: 'Error retrieving claim', error: error.message });
     }
   });
+  
 
 
 
@@ -50,21 +66,6 @@ async function routes(fastify, options) {
   });
 
 
-  fastify.put("/:id", {
-    schema: {
-      description: 'Updates the details of an existing claim.',
-      body: { $ref: 'claim#' },
-      response: {
-        200: { $ref: 'claim#' }
-      }
-    }
-  }, async (request, reply) => {
-    try {
-      return await claimController.updateClaim(request, reply);
-    } catch (error) {
-      reply.status(500).send({ message: 'Error updating claim', error: error.message });
-    }
-  });
 
 
 

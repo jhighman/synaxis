@@ -10,6 +10,7 @@ async function createClaim(request, reply) {
     const workflowId = request.body.workflowId;
     console.log(`Received workflowId: ${workflowId} (Type: ${typeof workflowId})`);
     let associatedWorkItemId;
+    let associatedWFId;
 
     if (workflowId === undefined) {
       console.log('No workflowId provided. Creating a new WorkItem.');
@@ -20,10 +21,11 @@ async function createClaim(request, reply) {
       });
       await newWorkItem.save();
       associatedWorkItemId = newWorkItem._id;
+      associatedWFId = newWorkItem.workflowId;
     } else {
       // If workflowId is provided, find the corresponding WorkItem
       console.log(`Finding WorkItem with workflowId: ${workflowId}`);
-      const workItem = await WorkItem.findOne({ workflowId: workflowId });
+      const workItem = await WorkItem.find({ workflowId: workflowId });
 
       if (!workItem) {
         console.log(`No WorkItem found with workflowId: ${workflowId}`);
@@ -33,11 +35,12 @@ async function createClaim(request, reply) {
 
       console.log(`Found WorkItem: ${workItem}`);
       associatedWorkItemId = workItem._id;
+      associatedWFId = workItem.workflowId;
     }
 
     // Create the Claim with the associated WorkItem
     console.log(`Creating claim with associated WorkItemId: ${associatedWorkItemId}`);
-    const claim = new Claim({ ...request.body, workItem: associatedWorkItemId });
+    const claim = new Claim({ ...request.body, workItem: associatedWorkItemId, workflowId: associatedWFId });
     await claim.save();
     const populatedClaim = await Claim.findById(claim._id).populate('workItem');
     console.log(`Claim created and populated with WorkItem: ${populatedClaim}`);
@@ -62,14 +65,30 @@ async function getAllClaims(request, reply) {
 
 async function getClaimById(request, reply) {
   try {
-    const claim = await Claim.findById(request.params.id).populate("workflowId");
+    // Retrieve the workflowId passed as 'id' parameter
+    const workflowId = request.params.id;
+    console.log(`Received request to get claim with workflowId: ${workflowId}`);
+
+    // Find the work item associated with the workflowId
+    const workItem = await WorkItem.findOne({ workflowId: workflowId });
+    if (!workItem) {
+      console.log(`No work item found with workflowId: ${workflowId}`);
+      reply.status(404).send({ message: "Work item with that workflowId not found" });
+      return;
+    }
+
+    // Find the claim that references the workItem
+    const claim = await Claim.findOne({ workItem: workItem.workflowId });
     if (!claim) {
-      reply.status(404).send({ message: "Claim with that id not found" });
+      console.log(`No claim found for workItem with ID: ${workItem._id}`);
+      reply.status(404).send({ message: "Claim associated with that workItem not found" });
     } else {
+      console.log(`Claim found for workItem with ID: ${workItem._id}`);
       reply.send(claim);
     }
   } catch (error) {
-    reply.status(400).send(error);
+    console.error(`Error retrieving claim with workflowId ${workflowId}: ${error.message}`);
+    reply.status(500).send({ message: 'Error retrieving claim', error: error });
   }
 }
 
